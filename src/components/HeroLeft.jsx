@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   FiHome,
   FiSearch,
@@ -11,9 +11,12 @@ import {
   FiX,
 } from "react-icons/fi";
 import { GiSparkles, GiBookPile } from "react-icons/gi";
+import { MoviesDataContext } from "../contexts/MoviesContext";
 
 const HeroLeft = () => {
+  
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { searchQuery, setSearchQuery } = useContext(MoviesDataContext);
 
   const handleSearchClick = () => {
     setIsSearchOpen((prev) => !prev);
@@ -48,6 +51,7 @@ const HeroLeft = () => {
             <div className="flex items-center bg-[#1c1c1c] rounded-xl px-3 py-2 mt-1 border border-[#2a2a2a] animate-in fade-in duration-150">
               <FiSearch className="w-4 h-4 text-[#666666] mr-2 flex-shrink-0" />
               <input
+              onChange={(e) => setSearchQuery(e.target.value)}
                 type="text"
                 autoFocus
                 placeholder="Search..."
@@ -63,7 +67,7 @@ const HeroLeft = () => {
             </div>
           )}
 
-          {/* Fixed missing opening tag here */}
+        
           <a
             href="#"
             className="flex items-center space-x-3.5 hover:bg-[#1c1c1c] hover:text-white px-4 py-3 rounded-xl font-medium transition duration-200 group"

@@ -2,7 +2,19 @@ import React, { useContext } from "react";
 import { MoviesDataContext } from "../contexts/MoviesContext"; 
 
 const AllMovies = () => {
-  const { movies, loading, error } = useContext(MoviesDataContext);
+  const { movies, loading, error,searchQuery } = useContext(MoviesDataContext);
+  const filterdMovies=movies.filter((movie)=>
+  {
+    const movieTitle = movie.title || movie.original_title || "";
+
+      const query = searchQuery || "";
+
+    return movieTitle.toLowerCase().includes(query.toLowerCase());
+  })
+console.log(filterdMovies);
+
+  
+  
 
   // 1. Loading State (Modern Loader)
   if (loading) {
@@ -34,9 +46,9 @@ const AllMovies = () => {
       
       {/* Responsive Movie Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
-        {movies.map((movie) => (
+        {filterdMovies.map((movie,index) => (
           <div 
-            key={movie.id} 
+            key={index} 
             className="group bg-[#181818] rounded-xl overflow-hidden shadow-lg hover:shadow-red-600/10 transform hover:-translate-y-2 transition-all duration-300 cursor-pointer flex flex-col"
           >
             {/* Image Section (Standard 2:3 Aspect Ratio) */}

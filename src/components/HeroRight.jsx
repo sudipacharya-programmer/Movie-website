@@ -12,7 +12,7 @@ const HeroRight = () => {
   // 1. Loading UI (Prevents code from crashing while waiting for the API response)
   if (loading) {
     return (
-      <div className="w-full h-[400px] rounded-3xl bg-[#161616] border border-[#222222] flex items-center justify-center text-gray-400 font-semibold animate-pulse">
+      <div className="w-full h-[500px] rounded-3xl bg-[#161616] border border-[#222222] flex items-center justify-center text-gray-400 font-semibold animate-pulse">
         Loading...
       </div>
     );

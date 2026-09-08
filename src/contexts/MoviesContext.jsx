@@ -8,18 +8,22 @@ export const MoviesProvider = ({ children }) => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchTrendingMovies = async () => {
       try {
         setLoading(true);
         const API_KEY = "e9097b137e5e9bacd6efb85111071284";
-        const urls = Array.from({ length: 5 }, (_, index) =>
-          `https://api.themoviedb.org/3/trending/movie/day?api_key=${API_KEY}&page=${index + 1}`
+        const urls = Array.from(
+          { length: 5 },
+          (_, index) =>
+            `https://api.themoviedb.org/3/trending/movie/day?api_key=${API_KEY}&page=${index + 1}`,
         );
-        const responses = await Promise.all(urls.map(url => axios.get(url)));
-        const allMovies = responses.flatMap(res => res.data.results);
+        const responses = await Promise.all(urls.map((url) => axios.get(url)));
+        const allMovies = responses.flatMap((res) => res.data.results);
         console.log("Fetched movies:", allMovies);
+        
         setMovies(allMovies);
       } catch (err) {
         console.error("API Error:", err);
@@ -33,7 +37,7 @@ export const MoviesProvider = ({ children }) => {
   }, []);
 
   return (
-    <MoviesDataContext.Provider value={{ movies, loading, error }}>
+    <MoviesDataContext.Provider value={{ movies, loading, error,setSearchQuery,searchQuery }}>
       {children}
     </MoviesDataContext.Provider>
   );
