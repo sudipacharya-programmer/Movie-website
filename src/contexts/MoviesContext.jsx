@@ -9,6 +9,7 @@ export const MoviesProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState('all')
 
   useEffect(() => {
     const fetchTrendingMovies = async () => {
@@ -37,7 +38,7 @@ export const MoviesProvider = ({ children }) => {
   }, []);
 
   return (
-    <MoviesDataContext.Provider value={{ movies, loading, error,setSearchQuery,searchQuery }}>
+    <MoviesDataContext.Provider value={{ movies, loading, error,setSearchQuery,searchQuery,activeCategory, setActiveCategory }}>
       {children}
     </MoviesDataContext.Provider>
   );

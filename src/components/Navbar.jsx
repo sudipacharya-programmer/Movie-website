@@ -9,7 +9,7 @@ const Navbar = () => {
       
       {/* Text black bata dark mode ma white hunxa */}
       <div className="text-2xl font-bold tracking-tight text-black dark:text-white">
-        Frame<span className="text-emerald-400">.</span>
+        iFrame<span className="text-emerald-400">.</span>
       </div>
 
       {/* Desktop Links: gray-600 bata dark mode ma gray-400 ra hover text white hunxa */}
