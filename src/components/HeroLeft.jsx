@@ -2,7 +2,6 @@ import React, { useContext, useState } from "react";
 import {
   FiHome,
   FiSearch,
-  FiGrid,
   FiTv,
   FiMusic,
   FiHeart,
@@ -12,18 +11,21 @@ import {
 } from "react-icons/fi";
 import { GiSparkles, GiBookPile } from "react-icons/gi";
 import { MoviesDataContext } from "../contexts/MoviesContext";
+import { useNavigate } from "react-router-dom";
 
 const HeroLeft = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const { searchQuery, setSearchQuery, activeCategory, setActiveCategory } = useContext(MoviesDataContext);
-  
+  const navigate = useNavigate();
+  const { searchQuery, setSearchQuery, activeCategory, setActiveCategory } =
+    useContext(MoviesDataContext);
+
   // Data array configuration mapping custom categories with real TMDB IDs and specific icons
   const GENRE_CATEGORIES = [
-    { id: "35", name: "Comedy", icon: FiTv },           // Maps to TV Shows button
-    { id: "16", name: "Anime", icon: GiSparkles },      // Maps to Anime button
-    { id: "14", name: "Fantasy", icon: GiBookPile },    // Maps to Manga/Fantasy button
-    { id: "10402", name: "Music", icon: FiMusic },      // Maps to Music button
-    { id: "28", name: "Action", icon: FiActivity },     // Maps to Live Sports/Action button
+    { id: "35", name: "Comedy", icon: FiTv }, // Maps to TV Shows button
+    { id: "16", name: "Anime", icon: GiSparkles }, // Maps to Anime button
+    { id: "14", name: "Fantasy", icon: GiBookPile }, // Maps to Manga/Fantasy button
+    { id: "10402", name: "Music", icon: FiMusic }, // Maps to Music button
+    { id: "28", name: "Action", icon: FiActivity }, // Maps to Live Sports/Action button
   ];
 
   // Click handler function for the search trigger button
@@ -32,9 +34,9 @@ const HeroLeft = () => {
   };
 
   return (
-    <div className="w-64 h-full bg-[#111111] text-[#9b9b9b] flex flex-col p-5 border-r border-[#1f1f1f] font-sans selection:bg-emerald-500 selection:text-black">
+    <div className="w-64 shrink-0 h-full bg-[#111111] text-[#9b9b9b] flex flex-col p-5 border-r border-[#1f1f1f] font-sans selection:bg-emerald-500 selection:text-black max-md:w-16 max-md:px-2">
       {/* Brand logo section */}
-      <div className="text-3xl font-black tracking-tight text-white px-3 mb-8 flex items-center">
+      <div className="text-3xl font-black tracking-tight text-white px-3 mb-8 flex items-center max-md:justify-center max-md:px-0 max-md:text-xl">
         iframe<span className="text-emerald-400">.</span>
       </div>
 
@@ -42,13 +44,23 @@ const HeroLeft = () => {
       <div className="bg-[#161616] rounded-2xl p-2 mb-6 border border-[#222222]">
         <nav className="space-y-1">
           {/* Home navigation link */}
-          <a
-            href="#"
-            className="flex items-center space-x-3.5 bg-[#242424] text-white px-4 py-3 rounded-xl font-semibold transition duration-200"
+          <button
+            type="button"
+            onClick={() => {
+              setActiveCategory("all");
+              setSearchQuery("");
+              setIsSearchOpen(false);
+              navigate("/");
+            }}
+            className={`flex w-full items-center space-x-3.5 px-4 py-3 rounded-xl font-semibold transition duration-200 text-left ${
+              activeCategory === "all" && !searchQuery
+                ? "bg-[#242424] text-white"
+                : "text-[#9b9b9b] hover:bg-[#1c1c1c] hover:text-white"
+            }`}
           >
-            <FiHome className="w-5 h-5 text-white" />
-            <span className="text-sm">Home</span>
-          </a>
+            <FiHome className="w-5 h-5" />
+            <span className="text-sm max-md:hidden">Home</span>
+          </button>
 
           {/* Toggle search layout action button */}
           <button
@@ -56,7 +68,7 @@ const HeroLeft = () => {
             className="w-full flex items-center space-x-3.5 hover:bg-[#1c1c1c] hover:text-white px-4 py-3 rounded-xl font-medium transition duration-200 group text-left"
           >
             <FiSearch className="w-5 h-5 group-hover:text-white transition" />
-            <span className="text-sm">Search</span>
+            <span className="text-sm max-md:hidden">Search</span>
           </button>
 
           {/* Core expandable handled controlled search input box container */}
@@ -79,15 +91,6 @@ const HeroLeft = () => {
               </button>
             </div>
           )}
-
-          {/* Browse navigation link */}
-          <a
-            href="#"
-            className="flex items-center space-x-3.5 hover:bg-[#1c1c1c] hover:text-white px-4 py-3 rounded-xl font-medium transition duration-200 group"
-          >
-            <FiGrid className="w-5 h-5 group-hover:text-white transition" />
-            <span className="text-sm">Browse</span>
-          </a>
         </nav>
       </div>
 
@@ -103,16 +106,24 @@ const HeroLeft = () => {
           const isSelected = activeCategory === category.id;
 
           return (
-            <button 
+            <button
               key={category.id}
               type="button"
-              onClick={() => { setActiveCategory(category.id); setSearchQuery(""); }}
+              onClick={() => {
+                setActiveCategory(category.id);
+                setSearchQuery("");
+                navigate("/");
+              }}
               className={`w-full flex items-center space-x-3.5 px-3 py-3 rounded-xl font-medium transition duration-200 group text-left ${
-                isSelected ? "bg-[#1c1c1c] text-white" : "text-[#9b9b9b] hover:bg-[#1c1c1c] hover:text-white"
+                isSelected
+                  ? "bg-[#1c1c1c] text-white"
+                  : "text-[#9b9b9b] hover:bg-[#1c1c1c] hover:text-white"
               }`}
             >
-              <Icon className={`w-5 h-5 transition ${isSelected ? "text-emerald-400" : "text-[#888888] group-hover:text-white"}`} />
-              <span className="text-sm">{category.name}</span>
+              <Icon
+                className={`w-5 h-5 transition ${isSelected ? "text-emerald-400" : "text-[#888888] group-hover:text-white"}`}
+              />
+              <span className="text-sm max-md:hidden">{category.name}</span>
             </button>
           );
         })}
@@ -128,10 +139,11 @@ const HeroLeft = () => {
         {/* Watchlist mock placeholder layout element item */}
         <button
           type="button"
+          onClick={() => navigate("/watchlist")}
           className="w-full flex items-center space-x-3.5 text-[#9b9b9b] hover:bg-[#1c1c1c] hover:text-white px-3 py-3 rounded-xl font-medium transition duration-200 group text-left"
         >
           <FiHeart className="w-5 h-5 text-[#888888] group-hover:text-white transition-colors duration-200" />
-          <span className="text-sm">Watchlist</span>
+          <span className="text-sm max-md:hidden">Watchlist</span>
         </button>
 
         {/* History mock placeholder layout element item */}
@@ -140,7 +152,7 @@ const HeroLeft = () => {
           className="w-full flex items-center space-x-3.5 text-[#9b9b9b] hover:bg-[#1c1c1c] hover:text-white px-3 py-3 rounded-xl font-medium transition duration-200 group text-left"
         >
           <FiClock className="w-5 h-5 text-[#888888] group-hover:text-white transition-colors duration-200" />
-          <span className="text-sm">History</span>
+          <span className="text-sm max-md:hidden">History</span>
         </button>
       </div>
     </div>

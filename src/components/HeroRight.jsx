@@ -1,13 +1,21 @@
-import React, { useContext } from "react";
+import React, { useContext, useMemo } from "react";
 import { MoviesDataContext } from "../contexts/MoviesContext"; 
 import { FaPlay, FaPlus } from "react-icons/fa";
 
 const HeroRight = () => {
   
   const { movies, loading, error } = useContext(MoviesDataContext);
-
-  console.log("All movies:", movies);
-  console.log("Movies count:", movies?.length);
+  const topRatedMovie = useMemo(
+    () =>
+      movies.length
+        ? movies.reduce(
+            (max, movie) =>
+              movie.vote_average > max.vote_average ? movie : max,
+            movies[0],
+          )
+        : null,
+    [movies],
+  );
 
   // 1. Loading UI (Prevents code from crashing while waiting for the API response)
   if (loading) {
@@ -26,13 +34,6 @@ const HeroRight = () => {
       </div>
     );
   }
-
-  const topRatedMovie = movies.reduce(
-    (max, movie) => (movie.vote_average > max.vote_average ? movie : max),
-    movies[0],
-  );
-
-  console.log("Top Rated Movie Data Loaded:", topRatedMovie);
 
   // Building the backdrop image URL sequence for TMDB assets
   const backdropUrl = `https://image.tmdb.org/t/p/original${topRatedMovie?.backdrop_path}`;

@@ -1,32 +1,14 @@
-import React, { useContext,useState, useEffect } from "react";
-import { MoviesDataContext } from "../contexts/MoviesContext";
-import HeroRight from "./HeroRight";
+import React, { useContext, useMemo } from "react";
+import { GENRE_MAP, MoviesDataContext } from "../contexts/MoviesContext";
+import { WatchlistContext } from "../contexts/context";
+import { Link } from "react-router-dom";
 
 const AllMovies = () => {
-  const GENRE_MAP = {
-    28: "Action",
-    12: "Adventure",
-    16: "Animation",
-    35: "Comedy",
-    80: "Crime",
-    99: "Documentary",
-    18: "Drama",
-    10751: "Family",
-    14: "Fantasy",
-    36: "History",
-    27: "Horror",
-    10402: "Music",
-    9648: "Mystery",
-    10749: "Romance",
-    878: "Science Fiction",
-    53: "Thriller",
-    10752: "War",
-    37: "Western",
-  };
-  const { movies, loading, error, searchQuery,activeCategory } = useContext(MoviesDataContext);
-  
+  const { movies, loading, error, searchQuery, activeCategory } =
+    useContext(MoviesDataContext);
+  const { isInWatchlist, toggleWatchlist } = useContext(WatchlistContext);
 
-  const filterdMovies = movies.filter((movie) => {
+  const filteredMovies = useMemo(() => movies.filter((movie) => {
     const movieTitle = movie.title || movie.original_title || "";
     const movieYear = movie.release_date
       ? movie.release_date.split("-")[0]
@@ -37,19 +19,17 @@ const AllMovies = () => {
           .join(" ")
       : "";
 
-    const query = searchQuery || "";
-    const search=  movieTitle.toLowerCase().includes(query.toLowerCase()) ||
+    const query = (searchQuery || "").toLowerCase().trim();
+    const search =
+      movieTitle.toLowerCase().includes(query) ||
       movieYear.toLowerCase().includes(query) ||
       movieGenres.includes(query);
-       const categoryMatch = 
-    activeCategory === "all" || 
-    (movie.genre_ids && movie.genre_ids.includes(Number(activeCategory)));
-
+    const categoryMatch =
+      activeCategory === "all" ||
+      (movie.genre_ids && movie.genre_ids.includes(Number(activeCategory)));
 
     return search && categoryMatch;
-  });
-
-
+  }), [activeCategory, movies, searchQuery]);
 
   // 1. Loading State (Modern Loader)
   if (loading) {
@@ -62,7 +42,7 @@ const AllMovies = () => {
   }
 
   // 2. Error or Empty State Handling
-  if (error || !filterdMovies || filterdMovies == 0) {
+  if (error || filteredMovies.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-[calc(100vh-73px)] text-white text-center px-4">
         <div className="text-4xl mb-2">⚠️</div>
@@ -82,52 +62,84 @@ const AllMovies = () => {
       </h1>
 
       {/* Responsive Movie Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
-        {filterdMovies.map((movie, index) => (
-          <div
-            key={index}
-            className="group bg-[#181818] rounded-xl overflow-hidden shadow-lg hover:shadow-red-600/10 transform hover:-translate-y-2 transition-all duration-300 cursor-pointer flex flex-col"
-          >
-            {/* Image Section (Standard 2:3 Aspect Ratio) */}
-            <div className="relative w-full aspect-[2/3] bg-neutral-800 overflow-hidden">
-              {movie.poster_path ? (
-                <img
-                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                  alt={movie.title}
-                  loading="lazy"
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              ) : (
-                /* Fallback text if no image poster exists */
-                <div className="absolute inset-0 flex items-center justify-center text-xs text-neutral-500 font-medium">
-                  No Poster
-                </div>
-              )}
-
-              {/* Floating Rating Badge */}
-              {movie.vote_average && (
-                <span className="absolute top-2 right-2 bg-black/75 backdrop-blur-sm text-yellow-400 text-xs font-bold px-2 py-1 rounded-md shadow-md">
-                  ⭐ {movie.vote_average.toFixed(1)}
-                </span>
-              )}
-            </div>
-
-            {/* Movie Details Section */}
-            <div className="p-3 flex flex-col justify-between flex-grow">
-              <h3
-                className="font-semibold text-sm md:text-base text-neutral-100 truncate group-hover:text-red-500 transition-colors"
-                title={movie.title}
-              >
-                {movie.title}
-              </h3>
-              {/* Extracting release year safely */}
-              <p className="text-xs text-neutral-400 mt-1">
-                {movie.release_date ? movie.release_date.split("-")[0] : "N/A"}
-              </p>
-            </div>
+     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
+  {filteredMovies.map((movie) => (
+    
+    
+      <Link
+      to={`/movie/${movie.id}`} 
+      key={movie.id}
+      className="group bg-[#181818] rounded-xl overflow-hidden shadow-lg hover:shadow-red-600/10 transform hover:-translate-y-2 transition-all duration-300 cursor-pointer flex flex-col"
+    >
+      {/* Image Section (Standard 2:3 Aspect Ratio) */}
+      <div  className="relative w-full aspect-[2/3] bg-neutral-800 overflow-hidden">
+        {movie.poster_path ? (
+          <img
+            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+            alt={movie.title}
+            loading="lazy"
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          /* Fallback text if no image poster exists */
+          <div className="absolute inset-0 flex items-center justify-center text-xs text-neutral-500 font-medium">
+            No Poster
           </div>
-        ))}
+        )}
+
+        {/* 💡 Floating Add to Watchlist Button */}
+        <button
+          type="button"
+          onClick={(e)=>{
+            e.preventDefault();
+           e.stopPropagation();
+           toggleWatchlist(movie);
+          }}
+         
+          className="absolute top-2 left-2 bg-black/50 hover:bg-neutral-900/80 text-neutral-400 hover:text-red-500 backdrop-blur-sm p-2 rounded-lg shadow-md transition-all duration-200 z-10 opacity-100 sm:opacity-0 group-hover:opacity-100"
+          aria-label={isInWatchlist(movie.id) ? "Remove from watchlist" : "Add to watchlist"}
+        >
+          <svg
+            xmlns="http://w3.org"
+            fill={isInWatchlist(movie.id) ? "currentColor" : "none"}
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="w-4 h-4 transition-transform group-hover:scale-110"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+            />
+          </svg>
+        </button>
+
+        {/* Floating Rating Badge */}
+        {movie.vote_average && (
+          <span className="absolute top-2 right-2 bg-black/75 backdrop-blur-sm text-yellow-400 text-xs font-bold px-2 py-1 rounded-md shadow-md">
+            ⭐ {movie.vote_average.toFixed(1)}
+          </span>
+        )}
       </div>
+
+      {/* Movie Details Section */}
+      <div className="p-3 flex flex-col justify-between flex-grow">
+        <h3
+          className="font-semibold text-sm md:text-base text-neutral-100 truncate group-hover:text-red-500 transition-colors"
+          title={movie.title}
+        >
+          {movie.title}
+        </h3>
+        {/* Extracting release year safely */}
+        <p className="text-xs text-neutral-400 mt-1">
+          {movie.release_date ? movie.release_date.split("-")[0] : "N/A"}
+        </p>
+      </div>
+     </Link>
+  ))}
+</div>
+
     </div>
   );
 };

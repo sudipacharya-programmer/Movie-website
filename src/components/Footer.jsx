@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -16,33 +17,20 @@ const Footer = () => {
           </p>
         </div>
 
-        {/* Browse Column */}
+        {/* Available navigation */}
         <div className="space-y-4">
           <h4 className="text-white font-bold text-xs tracking-widest uppercase">Browse</h4>
           <ul className="space-y-2.5 text-[13px] font-medium">
-            <li><a href="#" className="hover:text-emerald-400 text-gray-400 transition-colors duration-200">All films</a></li>
-            <li><a href="#" className="hover:text-emerald-400 text-gray-400 transition-colors duration-200">Collections</a></li>
-            <li><a href="#" className="hover:text-emerald-400 text-gray-400 transition-colors duration-200">Directors</a></li>
+            <li><Link to="/" className="hover:text-emerald-400 text-gray-400 transition-colors duration-200">All films</Link></li>
+            <li><Link to="/watchlist" className="hover:text-emerald-400 text-gray-400 transition-colors duration-200">Watchlist</Link></li>
           </ul>
         </div>
 
-        {/* About Column */}
-        <div className="space-y-4">
-          <h4 className="text-white font-bold text-xs tracking-widest uppercase">About</h4>
-          <ul className="space-y-2.5 text-[13px] font-medium">
-            <li><a href="#" className="hover:text-emerald-400 text-gray-400 transition-colors duration-200">The editor's note</a></li>
-            <li><a href="#" className="hover:text-emerald-400 text-gray-400 transition-colors duration-200">How we choose</a></li>
-            <li><a href="#" className="hover:text-emerald-400 text-gray-400 transition-colors duration-200">Contact</a></li>
-          </ul>
-        </div>
-
-        {/* Account Column */}
+        {/* Account navigation */}
         <div className="space-y-4">
           <h4 className="text-white font-bold text-xs tracking-widest uppercase">Account</h4>
           <ul className="space-y-2.5 text-[13px] font-medium">
-            <li><a href="#" className="hover:text-emerald-400 text-gray-400 transition-colors duration-200">Sign in</a></li>
-            <li><a href="#" className="hover:text-emerald-400 text-gray-400 transition-colors duration-200">Membership</a></li>
-            <li><a href="#" className="hover:text-emerald-400 text-gray-400 transition-colors duration-200">Gift a subscription</a></li>
+            <li><Link to="/login" className="hover:text-emerald-400 text-gray-400 transition-colors duration-200">Login</Link></li>
           </ul>
         </div>
       </div>
